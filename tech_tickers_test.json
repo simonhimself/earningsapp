@@ -1,0 +1,50 @@
+[
+  {
+    "symbol": "AAPL",
+    "description": "APPLE INC",
+    "exchange": "NASDAQ",
+    "finnhubIndustry": "Technology"
+  },
+  {
+    "symbol": "MSFT",
+    "description": "MICROSOFT CORP",
+    "exchange": "NASDAQ",
+    "finnhubIndustry": "Technology"
+  },
+  {
+    "symbol": "GOOGL",
+    "description": "ALPHABET INC-CL C",
+    "exchange": "NASDAQ",
+    "finnhubIndustry": "Technology"
+  },
+  {
+    "symbol": "AMZN",
+    "description": "AMAZON.COM INC",
+    "exchange": "NASDAQ",
+    "finnhubIndustry": "Technology"
+  },
+  {
+    "symbol": "TSLA",
+    "description": "TESLA INC",
+    "exchange": "NASDAQ",
+    "finnhubIndustry": "Technology"
+  },
+  {
+    "symbol": "META",
+    "description": "META PLATFORMS INC-CLASS A",
+    "exchange": "NASDAQ",
+    "finnhubIndustry": "Technology"
+  },
+  {
+    "symbol": "NVDA",
+    "description": "NVIDIA CORP",
+    "exchange": "NASDAQ",
+    "finnhubIndustry": "Technology"
+  },
+  {
+    "symbol": "NFLX",
+    "description": "NETFLIX INC",
+    "exchange": "NASDAQ",
+    "finnhubIndustry": "Technology"
+  }
+] 

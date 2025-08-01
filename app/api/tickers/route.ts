@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 
-const OUTPUT_FILE = "tech_tickers_test.json";
+const OUTPUT_FILE = "tech_tickers.json";
 
 export async function GET(req: NextRequest) {
   try {

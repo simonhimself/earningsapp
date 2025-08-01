@@ -141,25 +141,39 @@ export function EarningsDashboard() {
             setViewState("empty")
           }
         } else {
-          // Search for all test tickers in the selected period
-          const testTickers = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA", "NFLX"]
-          const allEarnings = []
+          // Search for all tech tickers in the selected period
+          const allTickerSymbols = techTickers.map((t: any) => t.symbol)
+          const allEarnings: any[] = []
           
-          for (const symbol of testTickers) {
-            const params = new URLSearchParams()
-            params.append("symbol", symbol)
-            if (year) params.append("year", year)
-            if (quarter) params.append("quarter", quarter)
+          // Process in batches to avoid overwhelming the API
+          const BATCH_SIZE = 10
+          for (let i = 0; i < allTickerSymbols.length; i += BATCH_SIZE) {
+            const batch = allTickerSymbols.slice(i, i + BATCH_SIZE)
             
-            const res = await fetch(`/api/earnings?${params.toString()}`)
-            if (res.ok) {
-              const data = await res.json()
-              if (Array.isArray(data.earnings) && data.earnings.length > 0) {
-                allEarnings.push(...data.earnings)
+            // Process batch in parallel with rate limiting
+            const batchPromises = batch.map(async (symbol: string) => {
+              const params = new URLSearchParams()
+              params.append("symbol", symbol)
+              if (year) params.append("year", year)
+              if (quarter) params.append("quarter", quarter)
+              
+              const res = await fetch(`/api/earnings?${params.toString()}`)
+              if (res.ok) {
+                const data = await res.json()
+                if (Array.isArray(data.earnings) && data.earnings.length > 0) {
+                  return data.earnings
+                }
               }
+              return []
+            })
+            
+            const batchResults = await Promise.all(batchPromises)
+            batchResults.forEach(earnings => allEarnings.push(...earnings))
+            
+            // Delay between batches to respect API limits
+            if (i + BATCH_SIZE < allTickerSymbols.length) {
+              await new Promise(resolve => setTimeout(resolve, 200))
             }
-            // Small delay to avoid overwhelming the API
-            await new Promise(resolve => setTimeout(resolve, 100))
           }
           
           if (allEarnings.length > 0) {
@@ -220,24 +234,39 @@ export function EarningsDashboard() {
           setTechTickers(mappedTickers)
           
           // Now automatically load earnings data for current quarter
-          const testTickers = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA", "NFLX"]
-          const allEarnings = []
+          // Use all tech tickers instead of just test ones
+          const allTickerSymbols = mappedTickers.map((t: any) => t.symbol)
+          const allEarnings: any[] = []
           
-          for (const symbol of testTickers) {
-            const params = new URLSearchParams()
-            params.append("symbol", symbol)
-            params.append("year", currentPeriod.year)
-            params.append("quarter", currentPeriod.quarter)
+          // Process in batches to avoid overwhelming the API
+          const BATCH_SIZE = 10
+          for (let i = 0; i < allTickerSymbols.length; i += BATCH_SIZE) {
+            const batch = allTickerSymbols.slice(i, i + BATCH_SIZE)
             
-            const res = await fetch(`/api/earnings?${params.toString()}`)
-            if (res.ok) {
-              const data = await res.json()
-              if (Array.isArray(data.earnings) && data.earnings.length > 0) {
-                allEarnings.push(...data.earnings)
+            // Process batch in parallel with rate limiting
+            const batchPromises = batch.map(async (symbol: string) => {
+              const params = new URLSearchParams()
+              params.append("symbol", symbol)
+              params.append("year", currentPeriod.year)
+              params.append("quarter", currentPeriod.quarter)
+              
+              const res = await fetch(`/api/earnings?${params.toString()}`)
+              if (res.ok) {
+                const data = await res.json()
+                if (Array.isArray(data.earnings) && data.earnings.length > 0) {
+                  return data.earnings
+                }
               }
+              return []
+            })
+            
+            const batchResults = await Promise.all(batchPromises)
+            batchResults.forEach(earnings => allEarnings.push(...earnings))
+            
+            // Delay between batches to respect API limits
+            if (i + BATCH_SIZE < allTickerSymbols.length) {
+              await new Promise(resolve => setTimeout(resolve, 200))
             }
-            // Small delay to avoid overwhelming the API
-            await new Promise(resolve => setTimeout(resolve, 100))
           }
           
           if (allEarnings.length > 0) {
@@ -312,7 +341,7 @@ export function EarningsDashboard() {
         <div className="mb-8">
           {!isSearchMode && (
             <p className="text-sm text-gray-600 mb-4">
-              Showing current quarter earnings data for all test tickers. Search for a specific ticker or change the period to view different quarters.
+              Showing current quarter earnings data for all tech stocks. Search for a specific ticker or change the period to view different quarters.
             </p>
           )}
           {isSearchMode && (
@@ -320,7 +349,7 @@ export function EarningsDashboard() {
               {ticker ? (
                 <>Showing earnings data for <strong>{ticker}</strong> in {year} {quarter ? `Q${quarter}` : '(all quarters)'}.</>
               ) : (
-                <>Showing earnings data for all test tickers in {year} {quarter ? `Q${quarter}` : '(all quarters)'}.</>
+                <>Showing earnings data for all tech stocks in {year} {quarter ? `Q${quarter}` : '(all quarters)'}.</>
               )}
             </p>
           )}

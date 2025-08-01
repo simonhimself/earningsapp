@@ -233,80 +233,10 @@ export function EarningsDashboard() {
           }))
           setTechTickers(mappedTickers)
           
-          // Now automatically load earnings data for current quarter
-          // Use all tech tickers instead of just test ones
-          const allTickerSymbols = mappedTickers.map((t: any) => t.symbol)
-          const allEarnings: any[] = []
-          
-          // Process in batches to avoid overwhelming the API
-          const BATCH_SIZE = 10
-          for (let i = 0; i < allTickerSymbols.length; i += BATCH_SIZE) {
-            const batch = allTickerSymbols.slice(i, i + BATCH_SIZE)
-            
-            // Process batch in parallel with rate limiting
-            const batchPromises = batch.map(async (symbol: string) => {
-              const params = new URLSearchParams()
-              params.append("symbol", symbol)
-              params.append("year", currentPeriod.year)
-              params.append("quarter", currentPeriod.quarter)
-              
-              const res = await fetch(`/api/earnings?${params.toString()}`)
-              if (res.ok) {
-                const data = await res.json()
-                if (Array.isArray(data.earnings) && data.earnings.length > 0) {
-                  return data.earnings
-                }
-              }
-              return []
-            })
-            
-            const batchResults = await Promise.all(batchPromises)
-            batchResults.forEach(earnings => allEarnings.push(...earnings))
-            
-            // Delay between batches to respect API limits
-            if (i + BATCH_SIZE < allTickerSymbols.length) {
-              await new Promise(resolve => setTimeout(resolve, 200))
-            }
-          }
-          
-          if (allEarnings.length > 0) {
-            // Add exchange information from tech tickers data
-            const enrichedEarnings = allEarnings.map((earning: any) => {
-              const techTicker = mappedTickers.find((t: any) => t.symbol === earning.symbol)
-              return {
-                ...earning,
-                exchange: techTicker?.exchange || "N/A",
-                description: techTicker?.description || ""
-              }
-            })
-            setEarnings(enrichedEarnings)
-            setIsSearchMode(true)
-            setViewState("data")
-          } else {
-            // If no earnings data found, show tech tickers with upcoming dates
-            const upcomingEarningsRes = await fetch("/api/upcoming-earnings")
-            if (upcomingEarningsRes.ok) {
-              const earningsData = await upcomingEarningsRes.json()
-              const earningsMap = new Map()
-              if (earningsData.upcomingEarnings) {
-                earningsData.upcomingEarnings.forEach((e: any) => {
-                  earningsMap.set(e.symbol, e)
-                })
-              }
-              
-              const tickersWithDates = mappedTickers.map((t: any) => {
-                const earnings = earningsMap.get(t.symbol)
-                return {
-                  ...t,
-                  date: earnings?.date || null,
-                }
-              })
-              setEarnings(tickersWithDates)
-            } else {
-              setEarnings(mappedTickers)
-            }
-            setViewState("data")
-          }
+          // Show all tech tickers by default (don't try to load earnings data for all 374 stocks on page load)
+          // This provides a much better user experience and avoids API rate limiting
+          setEarnings(mappedTickers)
+          setViewState("data")
         } else {
           setEarnings([])
           setViewState("empty")
@@ -341,7 +271,7 @@ export function EarningsDashboard() {
         <div className="mb-8">
           {!isSearchMode && (
             <p className="text-sm text-gray-600 mb-4">
-              Showing current quarter earnings data for all tech stocks. Search for a specific ticker or change the period to view different quarters.
+              Showing all tech stocks. Search for a specific ticker or change the period to view earnings data for different quarters.
             </p>
           )}
           {isSearchMode && (

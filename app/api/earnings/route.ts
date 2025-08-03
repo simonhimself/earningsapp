@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 
+export const runtime = 'edge'
+
 const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY || "d1qeun9r01qrh89pu1tgd1qeun9r01qrh89pu1u0"
 const FINNHUB_BASE_URL = "https://finnhub.io/api/v1"
 

@@ -4,6 +4,8 @@ import { promises as fs } from "fs"
 const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY
 const FINNHUB_BASE_URL = "https://finnhub.io/api/v1"
 
+export const runtime = 'edge'
+
 export async function GET(req: NextRequest) {
   try {
     // Load tech tickers for filtering

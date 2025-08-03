@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Building2, Info, ChevronUp, ChevronDown } from "lucide-react"
 
 
@@ -431,7 +432,6 @@ export function EarningsDashboard() {
                       handleSearch();
                     }
                   }}
-                  className="h-12 border-gray-300 focus:border-blue-600 focus:ring-blue-600"
                 />
               </div>
 
@@ -443,17 +443,17 @@ export function EarningsDashboard() {
                   >
                     Year
                   </label>
-                  <select
-                    id="year"
-                    value={year}
-                    onChange={(e) => setYear(e.target.value)}
-                    className="h-12 w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-gray-900 focus:ring-gray-900"
-                  >
-                    <option value="2024">2024</option>
-                    <option value="2025">2025</option>
-                    <option value="2026">2026</option>
-                    <option value="2027">2027</option>
-                  </select>
+                  <Select value={year} onValueChange={setYear}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2024">2024</SelectItem>
+                      <SelectItem value="2025">2025</SelectItem>
+                      <SelectItem value="2026">2026</SelectItem>
+                      <SelectItem value="2027">2027</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="flex-1">
                   <label
@@ -462,18 +462,18 @@ export function EarningsDashboard() {
                   >
                     Quarter
                   </label>
-                  <select
-                    id="quarter"
-                    value={quarter}
-                    onChange={(e) => setQuarter(e.target.value)}
-                    className="h-12 w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-gray-900 focus:ring-gray-900"
-                  >
-                    <option value="">All Quarters</option>
-                    <option value="1">Q1</option>
-                    <option value="2">Q2</option>
-                    <option value="3">Q3</option>
-                    <option value="4">Q4</option>
-                  </select>
+                  <Select value={quarter} onValueChange={setQuarter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Quarters" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">All Quarters</SelectItem>
+                      <SelectItem value="1">Q1</SelectItem>
+                      <SelectItem value="2">Q2</SelectItem>
+                      <SelectItem value="3">Q3</SelectItem>
+                      <SelectItem value="4">Q4</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 

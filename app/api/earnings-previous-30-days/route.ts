@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
-import { promises as fs } from "fs"
+import techTickers from "../../../tech_tickers.json"
 
 const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY
 const FINNHUB_BASE_URL = "https://finnhub.io/api/v1"
 
-export const runtime = 'edge'
+export const runtime = 'edge' // Added for Cloudflare Pages Edge Runtime
 
 export async function GET(req: NextRequest) {
   try {
-    // Load tech tickers for filtering
-    const techTickersFile = await fs.readFile("tech_tickers.json", "utf-8")
-    const techTickers = JSON.parse(techTickersFile)
+    // Use imported tech tickers for filtering
     const techSymbols = new Set(techTickers.map((t: any) => t.symbol))
     
     // Calculate previous 30 days

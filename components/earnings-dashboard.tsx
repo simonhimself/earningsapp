@@ -164,6 +164,7 @@ export function EarningsDashboard() {
           params.append("symbol", ticker.trim())
           if (year) params.append("year", year)
           if (quarter && quarter !== "all") params.append("quarter", quarter)
+          console.log("[DEBUG] Search params:", { ticker: ticker.trim(), year, quarter, params: params.toString() })
           const res = await fetch(`/api/earnings?${params.toString()}`)
           if (!res.ok) throw new Error("Failed to fetch earnings data")
           const data = await res.json()
@@ -495,6 +496,14 @@ export function EarningsDashboard() {
                 </Button>
               )}
             </div>
+            
+            {/* Debug Info - Remove this later */}
+            {isSearchMode && (
+              <div className="mt-4 p-3 bg-gray-100 rounded-md text-sm">
+                <strong>Debug Info:</strong> Ticker: "{ticker}", Year: "{year}", Quarter: "{quarter}" 
+                {quarter === "all" ? " (will search all quarters)" : ` (will search Q${quarter})`}
+              </div>
+            )}
           </div>
         </div>
 

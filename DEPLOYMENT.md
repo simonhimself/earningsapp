@@ -63,3 +63,50 @@ Add the following environment variable in Cloudflare Pages settings:
 1. In your Cloudflare Pages project settings
 2. Go to **Custom domains**
 3. Add your domain and follow the DNS configuration instructions 
+
+## 🔑 1. Local Development (.env.local)
+
+Create a `.env.local` file in your project root (same level as `package.json`):
+
+```bash
+# Create the file
+touch .env.local
+```
+
+Then add your **new** API key to `.env.local`:
+```
+FINNHUB_API_KEY=your_new_api_key_from_finnhub
+```
+
+## 🌐 2. Cloudflare Pages (Production)
+
+1. **Go to** your Cloudflare Pages dashboard
+2. **Click** on your project
+3. **Go to** Settings → Environment variables
+4. **Add/Update** the variable:
+   - **Variable name**: `FINNHUB_API_KEY`
+   - **Value**: `your_new_api_key_from_finnhub`
+   - **Apply to**: Both Production and Preview environments
+5. **Save** the changes
+
+##  3. Important Steps
+
+### First: Get a New API Key
+1. **Go to Finnhub** and revoke the old exposed key
+2. **Generate a new API key**
+3. **Use the new key** in both places above
+
+### Then: Test
+1. **Local**: Run `npm run dev` and test your app
+2. **Production**: Cloudflare will auto-deploy with the new environment variable
+
+##  Example .env.local File
+
+Your `.env.local` should look like this:
+```
+FINNHUB_API_KEY=cn1234567890abcdef1234567890abcdef
+```
+
+**Remember**: The `.env.local` file is automatically ignored by Git (thanks to your `.gitignore`), so it will never be committed to your repository.
+
+Would you like me to help you create the `.env.local` file? 

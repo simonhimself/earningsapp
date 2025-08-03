@@ -628,40 +628,47 @@ export function EarningsDashboard() {
                 </div>
               </div>
               {/* Mobile Cards */}
-              <div className="sm:hidden space-y-4">
+              <div className="sm:hidden space-y-6">
                 {filteredEarnings.map((earning) => (
-                  <Card key={earning.symbol + earning.date} className="border border-gray-200">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-lg font-semibold text-gray-900">{earning.symbol}</h3>
+                  <Card key={earning.symbol + earning.date} className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                    <CardContent className="p-6">
+                      {/* Header Section */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <h3 className="text-xl font-bold text-gray-900">{earning.symbol}</h3>
                           {earning.exchange && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
                               {earning.exchange}
                             </span>
                           )}
                         </div>
                         <div className="text-right">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-base font-semibold text-gray-900">
                             {earning.date ? formatEarningsDate(earning.date).formattedDate : <span className="text-gray-500">-</span>}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-sm text-gray-500">
                             {earning.date ? formatEarningsDate(earning.date).relativeText : ""}
                           </div>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <span className="block text-sm font-medium text-gray-700 uppercase tracking-wide mb-1">Estimate</span>
-                          <span className="text-base text-gray-600">{earning.estimate !== null && earning.estimate !== undefined ? `$${Number(earning.estimate).toFixed(2)}` : <span className="text-gray-500">-</span>}</span>
+                      
+                      {/* Data Grid - Consistent with desktop order: Estimate → EPS → Surprise */}
+                      <div className="grid grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <span className="block text-sm font-semibold text-gray-700 uppercase tracking-wide">Estimate</span>
+                          <span className="text-lg text-gray-600 font-medium">
+                            {earning.estimate !== null && earning.estimate !== undefined ? `$${Number(earning.estimate).toFixed(2)}` : <span className="text-gray-500">-</span>}
+                          </span>
                         </div>
-                        <div>
-                          <span className="block text-sm font-medium text-gray-700 uppercase tracking-wide mb-1">EPS</span>
-                          <span className="text-base text-gray-900">{earning.actual !== null && earning.actual !== undefined ? `$${Number(earning.actual).toFixed(2)}` : <span className="text-gray-500">-</span>}</span>
+                        <div className="space-y-2">
+                          <span className="block text-sm font-semibold text-gray-700 uppercase tracking-wide">EPS</span>
+                          <span className="text-lg text-gray-900 font-semibold">
+                            {earning.actual !== null && earning.actual !== undefined ? `$${Number(earning.actual).toFixed(2)}` : <span className="text-gray-500">-</span>}
+                          </span>
                         </div>
-                        <div className="col-span-2">
-                          <span className="block text-sm font-medium text-gray-700 uppercase tracking-wide mb-1">Surprise</span>
-                          <span className={`text-base font-medium ${earning.surprisePercent !== null && earning.surprisePercent !== undefined ? (Number(earning.surprisePercent) > 0 ? "text-green-600" : Number(earning.surprisePercent) < 0 ? "text-red-600" : "") : ""}`}>
+                        <div className="col-span-2 space-y-2">
+                          <span className="block text-sm font-semibold text-gray-700 uppercase tracking-wide">Surprise</span>
+                          <span className={`text-lg font-bold ${earning.surprisePercent !== null && earning.surprisePercent !== undefined ? (Number(earning.surprisePercent) > 0 ? "text-green-600" : Number(earning.surprisePercent) < 0 ? "text-red-600" : "text-gray-600") : "text-gray-500"}`}>
                             {earning.surprisePercent !== null && earning.surprisePercent !== undefined ? `${Number(earning.surprisePercent) > 0 ? "+" : ""}${Number(earning.surprisePercent).toFixed(1)}%` : <span className="text-gray-500">-</span>}
                           </span>
                         </div>

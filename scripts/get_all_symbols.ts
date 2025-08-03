@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-const FINNHUB_API_KEY = 'd1qeun9r01qrh89pu1tgd1qeun9r01qrh89pu1u0';
+const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY || '';
 const EXCHANGES = ['NASDAQ', 'NYSE'];
 
 async function getSymbols(exchange: string) {

@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 // @ts-ignore
 const fs = require('fs/promises');
 
-const FINNHUB_API_KEY = 'd1qeun9r01qrh89pu1tgd1qeun9r01qrh89pu1u0';
+const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY || '';
 const ENDPOINTS = [
   { mic: 'XNAS', exchange: 'NASDAQ' },
   { mic: 'XNYS', exchange: 'NYSE' },

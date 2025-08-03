@@ -30,7 +30,7 @@ Set the following build configuration:
 Add the following environment variable in Cloudflare Pages settings:
 
 - **Variable name**: `FINNHUB_API_KEY`
-- **Value**: `d1qeun9r01qrh89pu1tgd1qeun9r01qrh89pu1u0`
+- **Value**: `your_new_api_key_from_finnhub`
 
 ### 4. Deploy
 

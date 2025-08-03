@@ -39,6 +39,47 @@ function SortIcon({
   return <ChevronUp className="w-4 h-4 text-gray-300" />
 }
 
+// Helper function to format dates nicely with relative time context
+function formatEarningsDate(dateString: string) {
+  const date = new Date(dateString)
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const earningsDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+
+  // Calculate days difference
+  const diffTime = earningsDate.getTime() - today.getTime()
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+  // Format the date
+  const options: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "numeric",
+    year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
+  }
+  const formattedDate = date.toLocaleDateString("en-US", options)
+
+  // Add relative time context
+  let relativeText = ""
+
+  if (diffDays === 0) {
+    relativeText = "Today"
+  } else if (diffDays === 1) {
+    relativeText = "Tomorrow"
+  } else if (diffDays === -1) {
+    relativeText = "Yesterday"
+  } else if (diffDays > 0 && diffDays <= 7) {
+    relativeText = `In ${diffDays} days`
+  } else if (diffDays < 0 && diffDays >= -7) {
+    relativeText = `${Math.abs(diffDays)} days ago`
+  } else if (diffDays > 7) {
+    relativeText = `In ${diffDays} days`
+  } else {
+    relativeText = `${Math.abs(diffDays)} days ago`
+  }
+
+  return { formattedDate, relativeText, diffDays }
+}
+
 export function EarningsDashboard() {
   const [viewState, setViewState] = useState<ViewState>("data")
   // Helper function to get current quarter and year
@@ -553,8 +594,19 @@ export function EarningsDashboard() {
                               </span>
                             ) : <span className="text-gray-500">-</span>}
                           </td>
-                          <td className="px-6 py-4 text-base text-gray-600">
-                            {earning.date ? new Date(earning.date).toLocaleDateString() : <span className="text-gray-500">-</span>}
+                          <td className="px-6 py-4">
+                            {earning.date ? (
+                              <div className="flex flex-col">
+                                <span className="text-base text-gray-900 font-medium">
+                                  {formatEarningsDate(earning.date).formattedDate}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  {formatEarningsDate(earning.date).relativeText}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-gray-500">-</span>
+                            )}
                           </td>
                           <td className="px-6 py-4 text-base text-gray-600">
                             {earning.estimate !== null && earning.estimate !== undefined ? `$${Number(earning.estimate).toFixed(2)}` : <span className="text-gray-500">-</span>}
@@ -589,7 +641,14 @@ export function EarningsDashboard() {
                             </span>
                           )}
                         </div>
-                        <span className="text-sm text-gray-600">{earning.date ? new Date(earning.date).toLocaleDateString() : <span className="text-gray-500">-</span>}</span>
+                        <div className="text-right">
+                          <div className="text-sm font-medium text-gray-900">
+                            {earning.date ? formatEarningsDate(earning.date).formattedDate : <span className="text-gray-500">-</span>}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {earning.date ? formatEarningsDate(earning.date).relativeText : ""}
+                          </div>
+                        </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>

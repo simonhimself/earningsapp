@@ -67,6 +67,7 @@ export function EarningsDashboard() {
 
   const [sortField, setSortField] = useState<SortField | null>(null)
   const [sortDirection, setSortDirection] = useState<SortDirection | null>(null)
+  const [activePeriod, setActivePeriod] = useState<"next30" | "previous30" | "search">("next30")
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -112,6 +113,7 @@ export function EarningsDashboard() {
     setIsSearchMode(true)
     setViewState("loading")
     setError(null)
+    setActivePeriod("search")
     
           try {
         if (ticker.trim()) {
@@ -204,12 +206,62 @@ export function EarningsDashboard() {
     setIsSearchMode(false)
     setTicker("")
     setError(null)
-    setEarnings(techTickers)
-    setViewState("data")
+    setActivePeriod("next30")
+    loadNext30Days()
+  }
+
+  const loadNext30Days = async () => {
+    setViewState("loading")
+    setError(null)
+    setActivePeriod("next30")
+    setIsSearchMode(false)
+    
+    try {
+      const res = await fetch("/api/earnings-next-30-days")
+      if (!res.ok) throw new Error("Failed to fetch earnings data")
+      const data = await res.json()
+      
+      if (data.earnings && data.earnings.length > 0) {
+        setEarnings(data.earnings)
+        setViewState("data")
+      } else {
+        setEarnings([])
+        setViewState("empty")
+      }
+    } catch (err: any) {
+      setError(err.message || "Unknown error")
+      setEarnings([])
+      setViewState("empty")
+    }
+  }
+
+  const loadPrevious30Days = async () => {
+    setViewState("loading")
+    setError(null)
+    setActivePeriod("previous30")
+    setIsSearchMode(false)
+    
+    try {
+      const res = await fetch("/api/earnings-previous-30-days")
+      if (!res.ok) throw new Error("Failed to fetch earnings data")
+      const data = await res.json()
+      
+      if (data.earnings && data.earnings.length > 0) {
+        setEarnings(data.earnings)
+        setViewState("data")
+      } else {
+        setEarnings([])
+        setViewState("empty")
+      }
+    } catch (err: any) {
+      setError(err.message || "Unknown error")
+      setEarnings([])
+      setViewState("empty")
+    }
   }
 
   useEffect(() => {
-    // On mount, fetch all tickers and then load current quarter earnings data
+    // On mount, load next 30 days of tech earnings by default
     (async () => {
       setViewState("loading")
       setError(null)
@@ -233,10 +285,19 @@ export function EarningsDashboard() {
           }))
           setTechTickers(mappedTickers)
           
-          // Show all tech tickers by default (don't try to load earnings data for all 374 stocks on page load)
-          // This provides a much better user experience and avoids API rate limiting
-          setEarnings(mappedTickers)
-          setViewState("data")
+          // Load next 30 days of earnings data
+          const earningsRes = await fetch("/api/earnings-next-30-days")
+          if (!earningsRes.ok) throw new Error("Failed to fetch earnings data")
+          const earningsData = await earningsRes.json()
+          
+          if (earningsData.earnings && earningsData.earnings.length > 0) {
+            setEarnings(earningsData.earnings)
+            setViewState("data")
+          } else {
+            // Fallback to showing all tech tickers if no earnings data
+            setEarnings(mappedTickers)
+            setViewState("data")
+          }
         } else {
           setEarnings([])
           setViewState("empty")
@@ -247,7 +308,7 @@ export function EarningsDashboard() {
         setViewState("empty")
       }
     })()
-  }, [currentPeriod.year, currentPeriod.quarter])
+  }, [])
 
   const filteredEarnings = getSortedEarnings()
 
@@ -271,7 +332,8 @@ export function EarningsDashboard() {
         <div className="mb-8">
           {!isSearchMode && (
             <p className="text-sm text-gray-600 mb-4">
-              Showing all tech stocks. Search for a specific ticker or change the period to view earnings data for different quarters.
+              {activePeriod === "next30" && "Showing tech earnings for the next 30 days. Use the buttons above for quick navigation, or use the search filters below for specific queries."}
+              {activePeriod === "previous30" && "Showing tech earnings for the previous 30 days. Use the buttons above for quick navigation, or use the search filters below for specific queries."}
             </p>
           )}
           {isSearchMode && (
@@ -283,86 +345,115 @@ export function EarningsDashboard() {
               )}
             </p>
           )}
-          <div className="flex flex-col sm:flex-row gap-4 sm:items-end">
-            <div className="flex-1 max-w-xs">
-              <label htmlFor="ticker" className="block text-sm font-medium text-gray-700 uppercase tracking-wide mb-2">
-                Ticker
-              </label>
-              <Input
-                id="ticker"
-                type="text"
-                placeholder="e.g. AAPL"
-                value={ticker}
-                onChange={(e) => setTicker(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleSearch();
-                  }
-                }}
-                className="h-12 border-gray-300 focus:border-blue-600 focus:ring-blue-600"
-              />
-            </div>
-
-            <div className="flex gap-2 flex-1 max-w-md">
-              <div className="flex-1">
-                <label
-                  htmlFor="year"
-                  className="block text-sm font-medium text-gray-700 uppercase tracking-wide mb-2"
-                >
-                  Year
-                </label>
-                <select
-                  id="year"
-                  value={year}
-                  onChange={(e) => setYear(e.target.value)}
-                  className="h-12 w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-gray-900 focus:ring-gray-900"
-                >
-                  <option value="2024">2024</option>
-                  <option value="2025">2025</option>
-                  <option value="2026">2026</option>
-                  <option value="2027">2027</option>
-                </select>
-              </div>
-              <div className="flex-1">
-                <label
-                  htmlFor="quarter"
-                  className="block text-sm font-medium text-gray-700 uppercase tracking-wide mb-2"
-                >
-                  Quarter
-                </label>
-                <select
-                  id="quarter"
-                  value={quarter}
-                  onChange={(e) => setQuarter(e.target.value)}
-                  className="h-12 w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-gray-900 focus:ring-gray-900"
-                >
-                  <option value="">All Quarters</option>
-                  <option value="1">Q1</option>
-                  <option value="2">Q2</option>
-                  <option value="3">Q3</option>
-                  <option value="4">Q4</option>
-                </select>
-              </div>
-            </div>
-
-            <Button
-              onClick={handleSearch}
-              className="h-12 px-8 bg-white border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-colors shadow-sm"
-              aria-label="Search earnings data"
-            >
-              <Search className="w-4 h-4 mr-2" />
-              Search
-            </Button>
-            {isSearchMode && (
+          <div className="flex flex-col gap-4">
+            {/* Time Period Buttons */}
+            <div className="flex gap-2">
               <Button
-                onClick={clearSearch}
-                className="h-12 px-8 bg-gray-100 border border-gray-300 text-gray-700 hover:bg-gray-200 transition-colors shadow-sm"
-                aria-label="Clear search and show all tech tickers"
+                onClick={loadPrevious30Days}
+                className={`h-12 px-8 transition-colors shadow-sm ${
+                  activePeriod === "previous30"
+                    ? "bg-gray-900 text-white"
+                    : "bg-white border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
+                }`}
+                aria-label="Show previous 30 days earnings"
               >
-                Clear Search
+                Previous 30 Days
               </Button>
-            )}
+              <Button
+                onClick={loadNext30Days}
+                className={`h-12 px-8 transition-colors shadow-sm ${
+                  activePeriod === "next30"
+                    ? "bg-gray-900 text-white"
+                    : "bg-white border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
+                }`}
+                aria-label="Show next 30 days earnings"
+              >
+                Next 30 Days
+              </Button>
+            </div>
+
+            {/* Search and Filter Section */}
+            <div className="flex flex-col sm:flex-row gap-4 sm:items-end">
+              <div className="flex-1 max-w-xs">
+                <label htmlFor="ticker" className="block text-sm font-medium text-gray-700 uppercase tracking-wide mb-2">
+                  Ticker
+                </label>
+                <Input
+                  id="ticker"
+                  type="text"
+                  placeholder="e.g. AAPL"
+                  value={ticker}
+                  onChange={(e) => setTicker(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleSearch();
+                    }
+                  }}
+                  className="h-12 border-gray-300 focus:border-blue-600 focus:ring-blue-600"
+                />
+              </div>
+
+              <div className="flex gap-2 flex-1 max-w-md">
+                <div className="flex-1">
+                  <label
+                    htmlFor="year"
+                    className="block text-sm font-medium text-gray-700 uppercase tracking-wide mb-2"
+                  >
+                    Year
+                  </label>
+                  <select
+                    id="year"
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    className="h-12 w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-gray-900 focus:ring-gray-900"
+                  >
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                  </select>
+                </div>
+                <div className="flex-1">
+                  <label
+                    htmlFor="quarter"
+                    className="block text-sm font-medium text-gray-700 uppercase tracking-wide mb-2"
+                  >
+                    Quarter
+                  </label>
+                  <select
+                    id="quarter"
+                    value={quarter}
+                    onChange={(e) => setQuarter(e.target.value)}
+                    className="h-12 w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-gray-900 focus:ring-gray-900"
+                  >
+                    <option value="">All Quarters</option>
+                    <option value="1">Q1</option>
+                    <option value="2">Q2</option>
+                    <option value="3">Q3</option>
+                    <option value="4">Q4</option>
+                  </select>
+                </div>
+              </div>
+
+              <Button
+                onClick={handleSearch}
+                className="h-12 px-8 bg-white border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-colors shadow-sm"
+                aria-label="Search earnings data"
+              >
+                <Search className="w-4 h-4 mr-2" />
+                Search
+              </Button>
+              {isSearchMode && (
+                <Button
+                  onClick={clearSearch}
+                  className="h-12 px-8 bg-gray-100 border border-gray-300 text-gray-700 hover:bg-gray-200 transition-colors shadow-sm"
+                  aria-label="Clear search and show all tech tickers"
+                >
+                  Clear Search
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 

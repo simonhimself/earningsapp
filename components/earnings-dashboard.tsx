@@ -101,7 +101,7 @@ export function EarningsDashboard() {
   const currentPeriod = getCurrentQuarter()
   const [ticker, setTicker] = useState("")
   const [year, setYear] = useState(currentPeriod.year)
-  const [quarter, setQuarter] = useState(currentPeriod.quarter)
+  const [quarter, setQuarter] = useState("all")
   const [earnings, setEarnings] = useState<any[]>([])
   const [error, setError] = useState<string | null>(null)
   const [isSearchMode, setIsSearchMode] = useState(false)
@@ -163,7 +163,7 @@ export function EarningsDashboard() {
           const params = new URLSearchParams()
           params.append("symbol", ticker.trim())
           if (year) params.append("year", year)
-          if (quarter) params.append("quarter", quarter)
+          if (quarter && quarter !== "all") params.append("quarter", quarter)
           const res = await fetch(`/api/earnings?${params.toString()}`)
           if (!res.ok) throw new Error("Failed to fetch earnings data")
           const data = await res.json()
@@ -199,7 +199,7 @@ export function EarningsDashboard() {
               const params = new URLSearchParams()
               params.append("symbol", symbol)
               if (year) params.append("year", year)
-              if (quarter) params.append("quarter", quarter)
+              if (quarter && quarter !== "all") params.append("quarter", quarter)
               
               const res = await fetch(`/api/earnings?${params.toString()}`)
               if (res.ok) {
@@ -467,7 +467,7 @@ export function EarningsDashboard() {
                       <SelectValue placeholder="All Quarters" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Quarters</SelectItem>
+                      <SelectItem value="all">All Quarters</SelectItem>
                       <SelectItem value="1">Q1</SelectItem>
                       <SelectItem value="2">Q2</SelectItem>
                       <SelectItem value="3">Q3</SelectItem>

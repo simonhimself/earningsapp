@@ -483,7 +483,7 @@ export default function EarningsDashboardFigma() {
           <div>
             <label className="block text-sm mb-2 text-gray-700 dark:text-gray-300">YEAR</label>
             <Select value={year} onValueChange={setYear}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-[#f3f3f5]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -496,7 +496,7 @@ export default function EarningsDashboardFigma() {
           <div>
             <label className="block text-sm mb-2 text-gray-700 dark:text-gray-300">QUARTER</label>
             <Select value={quarter} onValueChange={setQuarter}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-[#f3f3f5]">
                 <SelectValue placeholder="All Quarters" />
               </SelectTrigger>
               <SelectContent>

@@ -452,9 +452,9 @@ export function EarningsDashboard() {
           {isSearchMode && (
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 transition-colors">
               {ticker ? (
-                <>Showing earnings data for <strong className="text-gray-900 dark:text-gray-100">{ticker}</strong> in {year} {quarter ? `Q${quarter}` : '(all quarters)'}.</>
+                <>Showing earnings data for <strong className="text-gray-900 dark:text-gray-100">{ticker}</strong> in {year} {quarter && quarter !== "all" ? `Q${quarter}` : '(all quarters)'}.</>
               ) : (
-                <>Showing earnings data for all tech stocks in {year} {quarter ? `Q${quarter}` : '(all quarters)'}.</>
+                <>Showing earnings data for all tech stocks in {year} {quarter && quarter !== "all" ? `Q${quarter}` : '(all quarters)'}.</>
               )}
             </p>
           )}

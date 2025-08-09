@@ -361,8 +361,8 @@ export default function EarningsDashboardFigma() {
     // Apply sorting if set
     if (sortField && sortDirection) {
       filtered = [...filtered].sort((a, b) => {
-        let aValue: string | number = a[sortField]
-        let bValue: string | number = b[sortField]
+        let aValue: string | number = a[sortField] ?? 0
+        let bValue: string | number = b[sortField] ?? 0
         
         // Handle numeric fields
         if (sortField === "actual" || sortField === "estimate" || sortField === "surprisePercent") {
@@ -600,7 +600,9 @@ export default function EarningsDashboardFigma() {
                 {filteredEarnings.map((earning) => (
                   <div
                     key={earning.symbol + earning.date}
-                    ref={(el) => rowRefs.current[earning.symbol] = el}
+                    ref={(el) => {
+                      rowRefs.current[earning.symbol] = el;
+                    }}
                     className={`grid grid-cols-6 gap-4 px-6 py-4 transition-all duration-200 cursor-pointer relative border-b border-gray-200 dark:border-gray-700 ${
                       hoveredRow === earning.symbol
                         ? 'bg-blue-50 dark:bg-blue-900/20 shadow-md transform translate-x-1'

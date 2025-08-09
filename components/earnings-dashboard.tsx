@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Building2, Info, ChevronUp, ChevronDown } from "lucide-react"
+import { Search, Building2, Info, ChevronUp, ChevronDown, Star } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { WatchlistToggle } from "@/components/watchlist-toggle"
+import { useWatchlist } from "@/hooks/use-watchlist"
 
 
 // Mock data for demonstration
@@ -110,7 +112,11 @@ export function EarningsDashboard() {
 
   const [sortField, setSortField] = useState<SortField | null>(null)
   const [sortDirection, setSortDirection] = useState<SortDirection | null>(null)
-  const [activePeriod, setActivePeriod] = useState<"next30" | "previous30" | "today" | "tomorrow" | "search">("today")
+  const [activePeriod, setActivePeriod] = useState<"next30" | "previous30" | "today" | "tomorrow" | "search" | "watchlist">("today")
+  
+  // Watchlist functionality
+  const watchlist = useWatchlist()
+  const [isWatchlistMode, setIsWatchlistMode] = useState(false)
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -131,6 +137,13 @@ export function EarningsDashboard() {
 
   const getSortedEarnings = () => {
     let filtered = earnings
+    
+    // Filter by watchlist if in watchlist mode
+    if (isWatchlistMode) {
+      const watchedSymbols = watchlist.getWatchedSymbols()
+      filtered = filtered.filter(earning => watchedSymbols.includes(earning.symbol))
+    }
+    
     if (sortField && sortDirection) {
       filtered = [...filtered].sort((a, b) => {
         let aValue: string | number = a[sortField]
@@ -150,6 +163,23 @@ export function EarningsDashboard() {
       })
     }
     return filtered
+  }
+
+  // Handle watchlist toggle
+  const toggleWatchlistMode = () => {
+    const newWatchlistMode = !isWatchlistMode
+    setIsWatchlistMode(newWatchlistMode)
+    
+    if (newWatchlistMode) {
+      setActivePeriod("watchlist")
+      setIsSearchMode(false)
+      // Clear search when entering watchlist mode
+      setTicker("")
+    } else {
+      // Return to today view when exiting watchlist mode
+      setActivePeriod("today")
+      loadToday()
+    }
   }
 
   const handleSearch = async () => {
@@ -434,7 +464,14 @@ export function EarningsDashboard() {
               </div>
               <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">LOGO</span>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <WatchlistToggle 
+                count={watchlist.count}
+                isActive={isWatchlistMode}
+                onClick={toggleWatchlistMode}
+              />
+              <ThemeToggle />
+            </div>
           </div>
           <h1 className="text-4xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight transition-colors">TickrTime, never miss earnings again</h1>
         </header>
@@ -447,6 +484,7 @@ export function EarningsDashboard() {
               {activePeriod === "previous30" && "Showing tech earnings for the previous 30 days. Use the buttons above for quick navigation, or use the search filters below for specific queries."}
               {activePeriod === "today" && "Showing tech earnings for today. Use the buttons above for quick navigation, or use the search filters below for specific queries."}
               {activePeriod === "tomorrow" && "Showing tech earnings for tomorrow. Use the buttons above for quick navigation, or use the search filters below for specific queries."}
+              {activePeriod === "watchlist" && `Showing earnings for your ${watchlist.count} watched tickers. ${watchlist.count === 0 ? "Add tickers to your watchlist by clicking the star icons." : "Click the watchlist icon again to return to the main view."}`}
             </p>
           )}
           {isSearchMode && (
@@ -676,6 +714,11 @@ export function EarningsDashboard() {
                             <SortIcon field="surprisePercent" currentField={sortField} direction={sortDirection} />
                           </div>
                         </th>
+                        <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                          <div className="flex items-center gap-1">
+                            Action
+                          </div>
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -716,6 +759,21 @@ export function EarningsDashboard() {
                               </span>
                             ) : <span className="text-gray-500 dark:text-gray-400">-</span>}
                           </td>
+                          <td className="px-6 py-4">
+                            <button
+                              onClick={() => watchlist.toggleWatchlist(earning.symbol)}
+                              className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                              aria-label={watchlist.isInWatchlist(earning.symbol) ? `Remove ${earning.symbol} from watchlist` : `Add ${earning.symbol} to watchlist`}
+                            >
+                              <Star 
+                                className={`w-5 h-5 ${
+                                  watchlist.isInWatchlist(earning.symbol) 
+                                    ? "fill-yellow-400 text-yellow-400" 
+                                    : "text-gray-400 hover:text-yellow-400"
+                                } transition-colors`}
+                              />
+                            </button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -737,6 +795,19 @@ export function EarningsDashboard() {
                             </span>
                           )}
                         </div>
+                        <button
+                          onClick={() => watchlist.toggleWatchlist(earning.symbol)}
+                          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          aria-label={watchlist.isInWatchlist(earning.symbol) ? `Remove ${earning.symbol} from watchlist` : `Add ${earning.symbol} to watchlist`}
+                        >
+                          <Star 
+                            className={`w-6 h-6 ${
+                              watchlist.isInWatchlist(earning.symbol) 
+                                ? "fill-yellow-400 text-yellow-400" 
+                                : "text-gray-400 hover:text-yellow-400"
+                            } transition-colors`}
+                          />
+                        </button>
                         <div className="text-right">
                           <div className="text-base font-semibold text-gray-900 dark:text-gray-100">
                             {earning.date ? formatEarningsDate(earning.date).formattedDate : <span className="text-gray-500 dark:text-gray-400">-</span>}

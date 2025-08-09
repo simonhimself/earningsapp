@@ -109,7 +109,7 @@ export function EarningsDashboard() {
 
   const [sortField, setSortField] = useState<SortField | null>(null)
   const [sortDirection, setSortDirection] = useState<SortDirection | null>(null)
-  const [activePeriod, setActivePeriod] = useState<"next30" | "previous30" | "search">("next30")
+  const [activePeriod, setActivePeriod] = useState<"next30" | "previous30" | "today" | "tomorrow" | "search">("today")
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -249,8 +249,8 @@ export function EarningsDashboard() {
     setIsSearchMode(false)
     setTicker("")
     setError(null)
-    setActivePeriod("next30")
-    loadNext30Days()
+    setActivePeriod("today")
+    loadToday()
   }
 
   const loadNext30Days = async () => {
@@ -309,8 +309,64 @@ export function EarningsDashboard() {
     }
   }
 
+  const loadToday = async () => {
+    setViewState("loading")
+    setError(null)
+    setActivePeriod("today")
+    setIsSearchMode(false)
+    // Set default sorting to symbol for today's earnings
+    setSortField("symbol")
+    setSortDirection("asc")
+    
+    try {
+      const res = await fetch("/api/earnings-today")
+      if (!res.ok) throw new Error("Failed to fetch earnings data")
+      const data = await res.json()
+      
+      if (data.earnings && data.earnings.length > 0) {
+        setEarnings(data.earnings)
+        setViewState("data")
+      } else {
+        setEarnings([])
+        setViewState("empty")
+      }
+    } catch (err: any) {
+      setError(err.message || "Unknown error")
+      setEarnings([])
+      setViewState("empty")
+    }
+  }
+
+  const loadTomorrow = async () => {
+    setViewState("loading")
+    setError(null)
+    setActivePeriod("tomorrow")
+    setIsSearchMode(false)
+    // Set default sorting to symbol for tomorrow's earnings
+    setSortField("symbol")
+    setSortDirection("asc")
+    
+    try {
+      const res = await fetch("/api/earnings-tomorrow")
+      if (!res.ok) throw new Error("Failed to fetch earnings data")
+      const data = await res.json()
+      
+      if (data.earnings && data.earnings.length > 0) {
+        setEarnings(data.earnings)
+        setViewState("data")
+      } else {
+        setEarnings([])
+        setViewState("empty")
+      }
+    } catch (err: any) {
+      setError(err.message || "Unknown error")
+      setEarnings([])
+      setViewState("empty")
+    }
+  }
+
   useEffect(() => {
-    // On mount, load next 30 days of tech earnings by default
+    // On mount, load today's tech earnings by default
     (async () => {
       setViewState("loading")
       setError(null)
@@ -334,22 +390,22 @@ export function EarningsDashboard() {
           }))
           setTechTickers(mappedTickers)
           
-          // Load next 30 days of earnings data
-          const earningsRes = await fetch("/api/earnings-next-30-days")
+          // Load today's earnings data
+          const earningsRes = await fetch("/api/earnings-today")
           if (!earningsRes.ok) throw new Error("Failed to fetch earnings data")
           const earningsData = await earningsRes.json()
           
-          // Set default sorting to date ascending (nearest dates first) for next 30 days
-          setSortField("date")
+          // Set default sorting to symbol ascending for today's earnings
+          setSortField("symbol")
           setSortDirection("asc")
           
           if (earningsData.earnings && earningsData.earnings.length > 0) {
             setEarnings(earningsData.earnings)
             setViewState("data")
           } else {
-            // Fallback to showing all tech tickers if no earnings data
-            setEarnings(mappedTickers)
-            setViewState("data")
+            // If no earnings today, show empty state instead of fallback
+            setEarnings([])
+            setViewState("empty")
           }
         } else {
           setEarnings([])
@@ -387,6 +443,8 @@ export function EarningsDashboard() {
             <p className="text-sm text-gray-600 mb-4">
               {activePeriod === "next30" && "Showing tech earnings for the next 30 days. Use the buttons above for quick navigation, or use the search filters below for specific queries."}
               {activePeriod === "previous30" && "Showing tech earnings for the previous 30 days. Use the buttons above for quick navigation, or use the search filters below for specific queries."}
+              {activePeriod === "today" && "Showing tech earnings for today. Use the buttons above for quick navigation, or use the search filters below for specific queries."}
+              {activePeriod === "tomorrow" && "Showing tech earnings for tomorrow. Use the buttons above for quick navigation, or use the search filters below for specific queries."}
             </p>
           )}
           {isSearchMode && (
@@ -400,7 +458,7 @@ export function EarningsDashboard() {
           )}
           <div className="flex flex-col gap-4">
             {/* Time Period Buttons */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <Button
                 onClick={loadPrevious30Days}
                 className={`h-12 px-8 transition-colors shadow-sm ${
@@ -411,6 +469,28 @@ export function EarningsDashboard() {
                 aria-label="Show previous 30 days earnings"
               >
                 Previous 30 Days
+              </Button>
+              <Button
+                onClick={loadToday}
+                className={`h-12 px-8 transition-colors shadow-sm ${
+                  activePeriod === "today"
+                    ? "bg-gray-900 text-white"
+                    : "bg-white border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
+                }`}
+                aria-label="Show today's earnings"
+              >
+                Today
+              </Button>
+              <Button
+                onClick={loadTomorrow}
+                className={`h-12 px-8 transition-colors shadow-sm ${
+                  activePeriod === "tomorrow"
+                    ? "bg-gray-900 text-white"
+                    : "bg-white border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
+                }`}
+                aria-label="Show tomorrow's earnings"
+              >
+                Tomorrow
               </Button>
               <Button
                 onClick={loadNext30Days}

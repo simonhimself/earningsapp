@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Building2, Info, ChevronUp, ChevronDown } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 
 // Mock data for demonstration
@@ -422,25 +423,26 @@ export function EarningsDashboard() {
   const filteredEarnings = getSortedEarnings()
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors">
       <div className="max-w-4xl mx-auto px-6 py-6">
         {/* Header */}
         <header className="mb-6">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gray-100 rounded border border-gray-200 flex items-center justify-center">
-                <Building2 className="w-4 h-4 text-gray-600" />
+              <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 flex items-center justify-center transition-colors">
+                <Building2 className="w-4 h-4 text-gray-600 dark:text-gray-300" />
               </div>
-              <span className="text-sm text-gray-500 font-medium">LOGO</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">LOGO</span>
             </div>
+            <ThemeToggle />
           </div>
-          <h1 className="text-4xl font-semibold text-gray-900 tracking-tight">Tech Earnings Dashboard</h1>
+          <h1 className="text-4xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight transition-colors">Tech Earnings Dashboard</h1>
         </header>
 
         {/* Filters Section */}
         <div className="mb-8">
           {!isSearchMode && (
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 transition-colors">
               {activePeriod === "next30" && "Showing tech earnings for the next 30 days. Use the buttons above for quick navigation, or use the search filters below for specific queries."}
               {activePeriod === "previous30" && "Showing tech earnings for the previous 30 days. Use the buttons above for quick navigation, or use the search filters below for specific queries."}
               {activePeriod === "today" && "Showing tech earnings for today. Use the buttons above for quick navigation, or use the search filters below for specific queries."}
@@ -448,9 +450,9 @@ export function EarningsDashboard() {
             </p>
           )}
           {isSearchMode && (
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 transition-colors">
               {ticker ? (
-                <>Showing earnings data for <strong>{ticker}</strong> in {year} {quarter ? `Q${quarter}` : '(all quarters)'}.</>
+                <>Showing earnings data for <strong className="text-gray-900 dark:text-gray-100">{ticker}</strong> in {year} {quarter ? `Q${quarter}` : '(all quarters)'}.</>
               ) : (
                 <>Showing earnings data for all tech stocks in {year} {quarter ? `Q${quarter}` : '(all quarters)'}.</>
               )}
@@ -463,8 +465,8 @@ export function EarningsDashboard() {
                 onClick={loadPrevious30Days}
                 className={`h-12 px-8 transition-colors shadow-sm ${
                   activePeriod === "previous30"
-                    ? "bg-gray-900 text-white"
-                    : "bg-white border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
+                    ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900"
+                    : "bg-white dark:bg-gray-800 border border-gray-900 dark:border-gray-300 text-gray-900 dark:text-gray-100 hover:bg-gray-900 hover:text-white dark:hover:bg-gray-100 dark:hover:text-gray-900"
                 }`}
                 aria-label="Show previous 30 days earnings"
               >
@@ -474,8 +476,8 @@ export function EarningsDashboard() {
                 onClick={loadToday}
                 className={`h-12 px-8 transition-colors shadow-sm ${
                   activePeriod === "today"
-                    ? "bg-gray-900 text-white"
-                    : "bg-white border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
+                    ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900"
+                    : "bg-white dark:bg-gray-800 border border-gray-900 dark:border-gray-300 text-gray-900 dark:text-gray-100 hover:bg-gray-900 hover:text-white dark:hover:bg-gray-100 dark:hover:text-gray-900"
                 }`}
                 aria-label="Show today's earnings"
               >
@@ -485,8 +487,8 @@ export function EarningsDashboard() {
                 onClick={loadTomorrow}
                 className={`h-12 px-8 transition-colors shadow-sm ${
                   activePeriod === "tomorrow"
-                    ? "bg-gray-900 text-white"
-                    : "bg-white border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
+                    ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900"
+                    : "bg-white dark:bg-gray-800 border border-gray-900 dark:border-gray-300 text-gray-900 dark:text-gray-100 hover:bg-gray-900 hover:text-white dark:hover:bg-gray-100 dark:hover:text-gray-900"
                 }`}
                 aria-label="Show tomorrow's earnings"
               >
@@ -496,8 +498,8 @@ export function EarningsDashboard() {
                 onClick={loadNext30Days}
                 className={`h-12 px-8 transition-colors shadow-sm ${
                   activePeriod === "next30"
-                    ? "bg-gray-900 text-white"
-                    : "bg-white border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
+                    ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900"
+                    : "bg-white dark:bg-gray-800 border border-gray-900 dark:border-gray-300 text-gray-900 dark:text-gray-100 hover:bg-gray-900 hover:text-white dark:hover:bg-gray-100 dark:hover:text-gray-900"
                 }`}
                 aria-label="Show next 30 days earnings"
               >
@@ -508,7 +510,7 @@ export function EarningsDashboard() {
             {/* Search and Filter Section */}
             <div className="flex flex-col sm:flex-row gap-4 sm:items-end">
               <div className="flex-1 max-w-xs">
-                <label htmlFor="ticker" className="block text-sm font-medium text-gray-700 uppercase tracking-wide mb-2">
+                <label htmlFor="ticker" className="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2 transition-colors">
                   Ticker
                 </label>
                 <Input
@@ -530,7 +532,7 @@ export function EarningsDashboard() {
                 <div className="flex-1">
                   <label
                     htmlFor="year"
-                    className="block text-sm font-medium text-gray-700 uppercase tracking-wide mb-2"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2 transition-colors"
                   >
                     Year
                   </label>
@@ -549,7 +551,7 @@ export function EarningsDashboard() {
                 <div className="flex-1">
                   <label
                     htmlFor="quarter"
-                    className="block text-sm font-medium text-gray-700 uppercase tracking-wide mb-2"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2 transition-colors"
                   >
                     Quarter
                   </label>
@@ -570,7 +572,7 @@ export function EarningsDashboard() {
 
               <Button
                 onClick={handleSearch}
-                className="h-12 px-8 bg-white border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-colors shadow-sm"
+                className="h-12 px-8 bg-white dark:bg-gray-800 border border-gray-900 dark:border-gray-300 text-gray-900 dark:text-gray-100 hover:bg-gray-900 hover:text-white dark:hover:bg-gray-100 dark:hover:text-gray-900 transition-colors shadow-sm"
                 aria-label="Search earnings data"
               >
                 <Search className="w-4 h-4 mr-2" />
@@ -579,7 +581,7 @@ export function EarningsDashboard() {
               {isSearchMode && (
                 <Button
                   onClick={clearSearch}
-                  className="h-12 px-8 bg-gray-100 border border-gray-300 text-gray-700 hover:bg-gray-200 transition-colors shadow-sm"
+                  className="h-12 px-8 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors shadow-sm"
                   aria-label="Clear search and show all tech tickers"
                 >
                   Clear Search
@@ -592,21 +594,21 @@ export function EarningsDashboard() {
         </div>
 
         {/* Data Display */}
-        <div className="bg-white">
+        <div className="bg-white dark:bg-gray-900 transition-colors">
           {viewState === "loading" && (
             <div className="flex items-center justify-center py-16">
-              <div className="flex items-center gap-3 text-gray-500">
-                <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+              <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
+                <div className="w-5 h-5 border-2 border-gray-300 dark:border-gray-600 border-t-gray-600 dark:border-t-gray-400 rounded-full animate-spin"></div>
                 <span className="text-base">Loading...</span>
               </div>
             </div>
           )}
           {error && (
-            <div className="flex items-center justify-center py-4 text-red-600">{error}</div>
+            <div className="flex items-center justify-center py-4 text-red-600 dark:text-red-400">{error}</div>
           )}
           {viewState === "empty" && (
             <div className="flex items-center justify-center py-16">
-              <div className="flex items-center gap-3 text-gray-500">
+              <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
                 <Info className="w-5 h-5" />
                 <span className="text-base">No earnings found.</span>
               </div>
@@ -616,12 +618,12 @@ export function EarningsDashboard() {
             <>
               {/* Desktop Table */}
               <div className="hidden sm:block">
-                <div className="overflow-hidden border border-gray-200 rounded-lg">
+                <div className="overflow-hidden border border-gray-200 dark:border-gray-700 rounded-lg">
                   <table className="w-full">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-gray-50 dark:bg-gray-800">
                       <tr>
                         <th
-                          className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wide cursor-pointer hover:bg-gray-100 select-none"
+                          className="px-6 py-4 text-left text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 select-none transition-colors"
                           onClick={() => handleSort("symbol")}
                         >
                           <div className="flex items-center gap-1">
@@ -630,7 +632,7 @@ export function EarningsDashboard() {
                           </div>
                         </th>
                         <th
-                          className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wide cursor-pointer hover:bg-gray-100 select-none"
+                          className="px-6 py-4 text-left text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 select-none transition-colors"
                           onClick={() => handleSort("exchange")}
                         >
                           <div className="flex items-center gap-1">
@@ -639,7 +641,7 @@ export function EarningsDashboard() {
                           </div>
                         </th>
                         <th
-                          className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wide cursor-pointer hover:bg-gray-100 select-none"
+                          className="px-6 py-4 text-left text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 select-none transition-colors"
                           onClick={() => handleSort("date")}
                         >
                           <div className="flex items-center gap-1">
@@ -648,7 +650,7 @@ export function EarningsDashboard() {
                           </div>
                         </th>
                         <th
-                          className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wide cursor-pointer hover:bg-gray-100 select-none"
+                          className="px-6 py-4 text-left text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 select-none transition-colors"
                           onClick={() => handleSort("estimate")}
                         >
                           <div className="flex items-center gap-1">
@@ -657,7 +659,7 @@ export function EarningsDashboard() {
                           </div>
                         </th>
                         <th
-                          className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wide cursor-pointer hover:bg-gray-100 select-none"
+                          className="px-6 py-4 text-left text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 select-none transition-colors"
                           onClick={() => handleSort("actual")}
                         >
                           <div className="flex items-center gap-1">
@@ -666,7 +668,7 @@ export function EarningsDashboard() {
                           </div>
                         </th>
                         <th
-                          className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wide cursor-pointer hover:bg-gray-100 select-none"
+                          className="px-6 py-4 text-left text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 select-none transition-colors"
                           onClick={() => handleSort("surprisePercent")}
                         >
                           <div className="flex items-center gap-1">
@@ -676,43 +678,43 @@ export function EarningsDashboard() {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                       {filteredEarnings.map((earning, index) => (
-                        <tr key={earning.symbol + (earning.date || "") + index} className={index % 2 === 1 ? "bg-gray-50" : "bg-white"}>
-                          <td className="px-6 py-4 text-base font-medium text-gray-900">{earning.symbol}</td>
-                          <td className="px-6 py-4 text-base text-gray-600">
+                        <tr key={earning.symbol + (earning.date || "") + index} className={index % 2 === 1 ? "bg-gray-50 dark:bg-gray-800" : "bg-white dark:bg-gray-900"}>
+                          <td className="px-6 py-4 text-base font-medium text-gray-900 dark:text-gray-100">{earning.symbol}</td>
+                          <td className="px-6 py-4 text-base text-gray-600 dark:text-gray-400">
                             {earning.exchange ? (
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
                                 {earning.exchange}
                               </span>
-                            ) : <span className="text-gray-500">-</span>}
+                            ) : <span className="text-gray-500 dark:text-gray-400">-</span>}
                           </td>
                           <td className="px-6 py-4">
                             {earning.date ? (
                               <div className="flex flex-col">
-                                <span className="text-base text-gray-900 font-medium">
+                                <span className="text-base text-gray-900 dark:text-gray-100 font-medium">
                                   {formatEarningsDate(earning.date).formattedDate}
                                 </span>
-                                <span className="text-xs text-gray-500">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
                                   {formatEarningsDate(earning.date).relativeText}
                                 </span>
                               </div>
                             ) : (
-                              <span className="text-gray-500">-</span>
+                              <span className="text-gray-500 dark:text-gray-400">-</span>
                             )}
                           </td>
-                          <td className="px-6 py-4 text-base text-gray-600">
-                            {earning.estimate !== null && earning.estimate !== undefined ? `$${Number(earning.estimate).toFixed(2)}` : <span className="text-gray-500">-</span>}
+                          <td className="px-6 py-4 text-base text-gray-600 dark:text-gray-400">
+                            {earning.estimate !== null && earning.estimate !== undefined ? `$${Number(earning.estimate).toFixed(2)}` : <span className="text-gray-500 dark:text-gray-400">-</span>}
                           </td>
-                          <td className="px-6 py-4 text-base text-gray-900">
-                            {earning.actual !== null && earning.actual !== undefined ? `$${Number(earning.actual).toFixed(2)}` : <span className="text-gray-500">-</span>}
+                          <td className="px-6 py-4 text-base text-gray-900 dark:text-gray-100">
+                            {earning.actual !== null && earning.actual !== undefined ? `$${Number(earning.actual).toFixed(2)}` : <span className="text-gray-500 dark:text-gray-400">-</span>}
                           </td>
                           <td className="px-6 py-4 text-base">
                             {earning.surprisePercent !== null && earning.surprisePercent !== undefined ? (
                               <span className={`font-medium ${Number(earning.surprisePercent) > 0 ? "text-green-600" : Number(earning.surprisePercent) < 0 ? "text-red-600" : ""}`}>
                                 {Number(earning.surprisePercent) > 0 ? "+" : ""}{Number(earning.surprisePercent).toFixed(1)}%
                               </span>
-                            ) : <span className="text-gray-500">-</span>}
+                            ) : <span className="text-gray-500 dark:text-gray-400">-</span>}
                           </td>
                         </tr>
                       ))}
@@ -723,23 +725,23 @@ export function EarningsDashboard() {
               {/* Mobile Cards */}
               <div className="sm:hidden space-y-6">
                 {filteredEarnings.map((earning) => (
-                  <Card key={earning.symbol + earning.date} className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                  <Card key={earning.symbol + earning.date} className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow">
                     <CardContent className="p-6">
                       {/* Header Section */}
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <h3 className="text-xl font-bold text-gray-900">{earning.symbol}</h3>
+                          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{earning.symbol}</h3>
                           {earning.exchange && (
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
                               {earning.exchange}
                             </span>
                           )}
                         </div>
                         <div className="text-right">
-                          <div className="text-base font-semibold text-gray-900">
-                            {earning.date ? formatEarningsDate(earning.date).formattedDate : <span className="text-gray-500">-</span>}
+                          <div className="text-base font-semibold text-gray-900 dark:text-gray-100">
+                            {earning.date ? formatEarningsDate(earning.date).formattedDate : <span className="text-gray-500 dark:text-gray-400">-</span>}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
                             {earning.date ? formatEarningsDate(earning.date).relativeText : ""}
                           </div>
                         </div>
@@ -748,21 +750,21 @@ export function EarningsDashboard() {
                       {/* Data Grid - Consistent with desktop order: Estimate → EPS → Surprise */}
                       <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <span className="block text-sm font-semibold text-gray-700 uppercase tracking-wide">Estimate</span>
-                          <span className="text-lg text-gray-600 font-medium">
-                            {earning.estimate !== null && earning.estimate !== undefined ? `$${Number(earning.estimate).toFixed(2)}` : <span className="text-gray-500">-</span>}
+                          <span className="block text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">Estimate</span>
+                          <span className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+                            {earning.estimate !== null && earning.estimate !== undefined ? `$${Number(earning.estimate).toFixed(2)}` : <span className="text-gray-500 dark:text-gray-400">-</span>}
                           </span>
                         </div>
                         <div className="space-y-2">
-                          <span className="block text-sm font-semibold text-gray-700 uppercase tracking-wide">EPS</span>
-                          <span className="text-lg text-gray-900 font-semibold">
-                            {earning.actual !== null && earning.actual !== undefined ? `$${Number(earning.actual).toFixed(2)}` : <span className="text-gray-500">-</span>}
+                          <span className="block text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">EPS</span>
+                          <span className="text-lg text-gray-900 dark:text-gray-100 font-semibold">
+                            {earning.actual !== null && earning.actual !== undefined ? `$${Number(earning.actual).toFixed(2)}` : <span className="text-gray-500 dark:text-gray-400">-</span>}
                           </span>
                         </div>
                         <div className="col-span-2 space-y-2">
-                          <span className="block text-sm font-semibold text-gray-700 uppercase tracking-wide">Surprise</span>
-                          <span className={`text-lg font-bold ${earning.surprisePercent !== null && earning.surprisePercent !== undefined ? (Number(earning.surprisePercent) > 0 ? "text-green-600" : Number(earning.surprisePercent) < 0 ? "text-red-600" : "text-gray-600") : "text-gray-500"}`}>
-                            {earning.surprisePercent !== null && earning.surprisePercent !== undefined ? `${Number(earning.surprisePercent) > 0 ? "+" : ""}${Number(earning.surprisePercent).toFixed(1)}%` : <span className="text-gray-500">-</span>}
+                          <span className="block text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">Surprise</span>
+                          <span className={`text-lg font-bold ${earning.surprisePercent !== null && earning.surprisePercent !== undefined ? (Number(earning.surprisePercent) > 0 ? "text-green-600 dark:text-green-400" : Number(earning.surprisePercent) < 0 ? "text-red-600 dark:text-red-400" : "text-gray-600 dark:text-gray-400") : "text-gray-500 dark:text-gray-400"}`}>
+                            {earning.surprisePercent !== null && earning.surprisePercent !== undefined ? `${Number(earning.surprisePercent) > 0 ? "+" : ""}${Number(earning.surprisePercent).toFixed(1)}%` : <span className="text-gray-500 dark:text-gray-400">-</span>}
                           </span>
                         </div>
                       </div>

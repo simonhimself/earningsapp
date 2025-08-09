@@ -436,7 +436,7 @@ export function EarningsDashboard() {
             </div>
             <ThemeToggle />
           </div>
-          <h1 className="text-4xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight transition-colors">Tech Earnings Dashboard</h1>
+          <h1 className="text-4xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight transition-colors">TickrTime, never miss earnings again</h1>
         </header>
 
         {/* Filters Section */}

@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'TickrTime',
+  description: 'Never miss earnings again - Real-time tech stock earnings dashboard with comprehensive data and insights',
   generator: 'v0.dev',
 }
 

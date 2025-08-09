@@ -596,12 +596,12 @@ export default function EarningsDashboardFigma() {
               </div>
 
               {/* Table Body */}
-              <div className="divide-y">
+              <div>
                 {filteredEarnings.map((earning) => (
                   <div
                     key={earning.symbol + earning.date}
                     ref={(el) => rowRefs.current[earning.symbol] = el}
-                    className={`grid grid-cols-6 gap-4 px-6 py-4 transition-all duration-200 cursor-pointer relative ${
+                    className={`grid grid-cols-6 gap-4 px-6 py-4 transition-all duration-200 cursor-pointer relative border-b border-gray-200 dark:border-gray-700 ${
                       hoveredRow === earning.symbol
                         ? 'bg-blue-50 dark:bg-blue-900/20 shadow-md transform translate-x-1'
                         : 'hover:bg-gray-50 dark:hover:bg-gray-700'

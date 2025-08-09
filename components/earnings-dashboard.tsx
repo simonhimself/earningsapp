@@ -258,6 +258,9 @@ export function EarningsDashboard() {
     setError(null)
     setActivePeriod("next30")
     setIsSearchMode(false)
+    // Set default sorting to date ascending (nearest dates first)
+    setSortField("date")
+    setSortDirection("asc")
     
     try {
       const res = await fetch("/api/earnings-next-30-days")
@@ -283,6 +286,9 @@ export function EarningsDashboard() {
     setError(null)
     setActivePeriod("previous30")
     setIsSearchMode(false)
+    // Set default sorting to date descending (most recent dates first)
+    setSortField("date")
+    setSortDirection("desc")
     
     try {
       const res = await fetch("/api/earnings-previous-30-days")
@@ -332,6 +338,10 @@ export function EarningsDashboard() {
           const earningsRes = await fetch("/api/earnings-next-30-days")
           if (!earningsRes.ok) throw new Error("Failed to fetch earnings data")
           const earningsData = await earningsRes.json()
+          
+          // Set default sorting to date ascending (nearest dates first) for next 30 days
+          setSortField("date")
+          setSortDirection("asc")
           
           if (earningsData.earnings && earningsData.earnings.length > 0) {
             setEarnings(earningsData.earnings)

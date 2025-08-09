@@ -20,18 +20,69 @@ export async function GET(req: NextRequest) {
     
     console.log("[API] /api/earnings-previous-30-days date range:", { fromDate, toDate })
 
-    const url = `${FINNHUB_BASE_URL}/calendar/earnings?from=${fromDate}&to=${toDate}&token=${FINNHUB_API_KEY}`
-
-    const res = await fetch(url)
-    if (!res.ok) {
-      console.error("[API] Finnhub fetch failed:", res.status, res.statusText)
-      return NextResponse.json({ error: "Failed to fetch from Finnhub" }, { status: 500 })
+    // WORKAROUND: Finnhub has issues with cross-month date ranges
+    // Split the query by month to avoid missing data
+    const fromDateObj = new Date(fromDate)
+    const toDateObj = new Date(toDate)
+    
+    let allEarnings: any[] = []
+    
+    // Generate strictly month-by-month ranges to avoid cross-month queries
+    // Parse dates as YYYY-MM-DD strings to avoid timezone issues
+    const startYear = parseInt(fromDate.substring(0, 4))
+    const startMonth = parseInt(fromDate.substring(5, 7))
+    const endYear = parseInt(toDate.substring(0, 4))
+    const endMonth = parseInt(toDate.substring(5, 7))
+    
+    for (let year = startYear; year <= endYear; year++) {
+      const firstMonth = year === startYear ? startMonth : 1
+      const lastMonth = year === endYear ? endMonth : 12
+      
+      for (let month = firstMonth; month <= lastMonth; month++) {
+        // Calculate month boundaries as strings
+        const monthStartStr = `${year}-${month.toString().padStart(2, '0')}-01`
+        
+        // Get last day of month
+        const nextMonth = month === 12 ? 1 : month + 1
+        const nextYear = month === 12 ? year + 1 : year
+        const lastDay = new Date(nextYear, nextMonth - 1, 0).getDate()
+        const monthEndStr = `${year}-${month.toString().padStart(2, '0')}-${lastDay.toString().padStart(2, '0')}`
+        
+        // Constrain to our actual date range
+        const queryStart = monthStartStr < fromDate ? fromDate : monthStartStr
+        const queryEnd = monthEndStr > toDate ? toDate : monthEndStr
+        
+        // Skip if this month doesn't overlap with our range
+        if (queryStart > queryEnd) continue
+        
+        console.log(`[API] Querying month ${year}-${month}: ${queryStart} to ${queryEnd}`)
+        
+        const url = `${FINNHUB_BASE_URL}/calendar/earnings?from=${queryStart}&to=${queryEnd}&token=${FINNHUB_API_KEY}`
+        
+        const res = await fetch(url)
+        if (!res.ok) {
+          console.error("[API] Finnhub fetch failed for month:", year, month, res.status, res.statusText)
+          continue
+        }
+        
+        const data = await res.json()
+        const monthEarnings = Array.isArray(data.earningsCalendar) ? data.earningsCalendar : []
+        allEarnings.push(...monthEarnings)
+        
+        console.log(`[API] Found ${monthEarnings.length} earnings for month ${year}-${month}`)
+      }
     }
     
-    const data = await res.json()
-    console.log("[API] Finnhub response received, processing...")
-
-    let earnings = Array.isArray(data.earningsCalendar) ? data.earningsCalendar : []
+    console.log(`[API] Total earnings from all months: ${allEarnings.length}`)
+    
+    // Filter to exact date range and remove duplicates
+    const earnings = allEarnings.filter((e: any) => {
+      const earningDate = e.date
+      return earningDate >= fromDate && earningDate <= toDate
+    }).filter((e: any, index: number, self: any[]) => {
+      // Remove duplicates by symbol+date combination
+      return index === self.findIndex((other: any) => other.symbol === e.symbol && other.date === e.date)
+    })
     
     // Filter for tech stocks and process
     const techEarnings = earnings.filter((e: any) => techSymbols.has(e.symbol))
@@ -65,11 +116,18 @@ export async function GET(req: NextRequest) {
       }
     })
 
-    console.log(`[API] Found ${result.length} tech earnings for previous 30 days`)
+    // Sort by date descending (most recent dates first)
+    const sortedResult = result.sort((a, b) => {
+      const dateA = new Date(a.date).getTime()
+      const dateB = new Date(b.date).getTime()
+      return dateB - dateA
+    })
+
+    console.log(`[API] Found ${sortedResult.length} tech earnings for previous 30 days`)
     return NextResponse.json({ 
-      earnings: result,
+      earnings: sortedResult,
       dateRange: { from: fromDate, to: toDate },
-      totalFound: result.length
+      totalFound: sortedResult.length
     })
   } catch (error) {
     console.error("[API] Error fetching previous 30 days earnings:", error)

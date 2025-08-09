@@ -549,7 +549,7 @@ export default function EarningsDashboardFigma() {
               {/* Table Header */}
               <div 
                 ref={tableHeaderRef}
-                className="grid grid-cols-6 gap-4 px-6 py-3 bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700 text-sm text-gray-600 dark:text-gray-300 transition-colors"
+                className="grid grid-cols-6 gap-4 px-6 py-3 bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700 text-sm text-gray-600 dark:text-gray-300 transition-colors rounded-t-lg"
               >
                 <div 
                   className="flex items-center gap-1 cursor-pointer hover:text-gray-800"

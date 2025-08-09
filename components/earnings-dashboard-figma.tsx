@@ -477,6 +477,7 @@ export default function EarningsDashboardFigma() {
               placeholder="e.g. AAPL" 
               value={ticker}
               onChange={(e) => setTicker(e.target.value)}
+              className="bg-input-background"
             />
           </div>
           <div>

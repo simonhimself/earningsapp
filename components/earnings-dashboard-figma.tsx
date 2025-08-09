@@ -545,7 +545,7 @@ export default function EarningsDashboardFigma() {
         {/* Table Container with Action Icons */}
         {viewState === "data" && (
           <div className="relative">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 overflow-visible transition-colors">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 overflow-hidden transition-colors">
               {/* Table Header */}
               <div 
                 ref={tableHeaderRef}

@@ -603,7 +603,7 @@ export default function EarningsDashboardFigma() {
                     ref={(el) => rowRefs.current[earning.symbol] = el}
                     className={`grid grid-cols-6 gap-4 px-6 py-4 transition-all duration-200 cursor-pointer relative ${
                       hoveredRow === earning.symbol
-                        ? 'bg-blue-50 dark:bg-blue-900/20 shadow-md transform translate-x-1'
+                        ? 'bg-blue-50 dark:bg-blue-900/20 shadow-md'
                         : 'hover:bg-gray-50 dark:hover:bg-gray-700'
                     }`}
                     onMouseEnter={() => handleRowHover(earning.symbol)}

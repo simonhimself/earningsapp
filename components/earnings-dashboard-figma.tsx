@@ -394,13 +394,13 @@ export default function EarningsDashboardFigma() {
   const shouldShowIcons = hoveredRow !== null
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 transition-colors">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-2">
             <Building2 className="w-5 h-5 text-gray-600" />
-            <span className="text-gray-600">LOGO</span>
+            <span className="text-gray-600 dark:text-gray-400">LOGO</span>
           </div>
           <div className="flex items-center gap-2">
             <WatchlistToggle 
@@ -414,8 +414,8 @@ export default function EarningsDashboardFigma() {
 
         {/* Title and Description */}
         <div className="mb-8">
-          <h1 className="mb-4">TickrTime, never miss earnings again</h1>
-          <p className="text-gray-600 mb-6">
+          <h1 className="mb-4 text-gray-900 dark:text-gray-100 transition-colors">TickrTime, never miss earnings again</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-6 transition-colors">
             {!isSearchMode && !isWatchlistMode && (
               <>
                 {activePeriod === "next30" && "Showing tech earnings for the next 30 days. Use the buttons above for quick navigation, or use the search filters below for specific queries."}
@@ -472,7 +472,7 @@ export default function EarningsDashboardFigma() {
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div>
-            <label className="block text-sm mb-2">TICKER</label>
+            <label className="block text-sm mb-2 text-gray-700 dark:text-gray-300">TICKER</label>
             <Input 
               placeholder="e.g. AAPL" 
               value={ticker}
@@ -480,7 +480,7 @@ export default function EarningsDashboardFigma() {
             />
           </div>
           <div>
-            <label className="block text-sm mb-2">YEAR</label>
+            <label className="block text-sm mb-2 text-gray-700 dark:text-gray-300">YEAR</label>
             <Select value={year} onValueChange={setYear}>
               <SelectTrigger>
                 <SelectValue />
@@ -493,7 +493,7 @@ export default function EarningsDashboardFigma() {
             </Select>
           </div>
           <div>
-            <label className="block text-sm mb-2">QUARTER</label>
+            <label className="block text-sm mb-2 text-gray-700 dark:text-gray-300">QUARTER</label>
             <Select value={quarter} onValueChange={setQuarter}>
               <SelectTrigger>
                 <SelectValue placeholder="All Quarters" />
@@ -508,7 +508,7 @@ export default function EarningsDashboardFigma() {
             </Select>
           </div>
           <div>
-            <label className="block text-sm mb-2">&nbsp;</label>
+            <label className="block text-sm mb-2 text-gray-700 dark:text-gray-300">&nbsp;</label>
             <Button 
               className="w-full" 
               variant={activePeriod === "search" ? "default" : "outline"}
@@ -545,11 +545,11 @@ export default function EarningsDashboardFigma() {
         {/* Table Container with Action Icons */}
         {viewState === "data" && (
           <div className="relative">
-            <div className="bg-white rounded-lg shadow-sm border overflow-visible">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 overflow-visible transition-colors">
               {/* Table Header */}
               <div 
                 ref={tableHeaderRef}
-                className="grid grid-cols-6 gap-4 px-6 py-3 bg-gray-50 border-b text-sm text-gray-600"
+                className="grid grid-cols-6 gap-4 px-6 py-3 bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700 text-sm text-gray-600 dark:text-gray-300 transition-colors"
               >
                 <div 
                   className="flex items-center gap-1 cursor-pointer hover:text-gray-800"
@@ -603,8 +603,8 @@ export default function EarningsDashboardFigma() {
                     ref={(el) => rowRefs.current[earning.symbol] = el}
                     className={`grid grid-cols-6 gap-4 px-6 py-4 transition-all duration-200 cursor-pointer relative ${
                       hoveredRow === earning.symbol
-                        ? 'bg-blue-50 shadow-md transform translate-x-1'
-                        : 'hover:bg-gray-50'
+                        ? 'bg-blue-50 dark:bg-blue-900/20 shadow-md transform translate-x-1'
+                        : 'hover:bg-gray-50 dark:hover:bg-gray-700'
                     }`}
                     onMouseEnter={() => handleRowHover(earning.symbol)}
                     onMouseLeave={handleHoverEnd}
@@ -614,29 +614,29 @@ export default function EarningsDashboardFigma() {
                     </div>
                     <div className="flex items-center">
                       {earning.exchange ? (
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                        <Badge variant="secondary" className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs transition-colors">
                           {earning.exchange}
                         </Badge>
-                      ) : <span className="text-gray-500">-</span>}
+                      ) : <span className="text-gray-500 dark:text-gray-400">-</span>}
                     </div>
                     <div className="flex flex-col">
                       {earning.date ? (
                         <>
-                          <span className="text-sm">{formatEarningsDate(earning.date).formattedDate}</span>
-                          <span className="text-xs text-gray-500">{formatEarningsDate(earning.date).relativeText}</span>
+                          <span className="text-sm text-gray-900 dark:text-gray-100">{formatEarningsDate(earning.date).formattedDate}</span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">{formatEarningsDate(earning.date).relativeText}</span>
                         </>
-                      ) : <span className="text-gray-500">-</span>}
+                      ) : <span className="text-gray-500 dark:text-gray-400">-</span>}
                     </div>
-                    <div className="flex items-center text-sm">
+                    <div className="flex items-center text-sm text-gray-900 dark:text-gray-100">
                       {earning.estimate !== null && earning.estimate !== undefined ? `$${Number(earning.estimate).toFixed(2)}` : "-"}
                     </div>
-                    <div className="flex items-center text-sm">
+                    <div className="flex items-center text-sm text-gray-900 dark:text-gray-100">
                       {earning.actual !== null && earning.actual !== undefined ? `$${Number(earning.actual).toFixed(2)}` : "-"}
                     </div>
                     <div className={`flex items-center text-sm ${
                       earning.surprisePercent !== null && earning.surprisePercent !== undefined 
-                        ? (Number(earning.surprisePercent) > 0 ? "text-green-600" : Number(earning.surprisePercent) < 0 ? "text-red-600" : "text-gray-600")
-                        : "text-gray-400"
+                        ? (Number(earning.surprisePercent) > 0 ? "text-green-600 dark:text-green-400" : Number(earning.surprisePercent) < 0 ? "text-red-600 dark:text-red-400" : "text-gray-600 dark:text-gray-400")
+                        : "text-gray-400 dark:text-gray-500"
                     }`}>
                       {earning.surprisePercent !== null && earning.surprisePercent !== undefined ? (
                         `${Number(earning.surprisePercent) > 0 ? "+" : ""}${Number(earning.surprisePercent).toFixed(1)}%`
@@ -679,7 +679,7 @@ export default function EarningsDashboardFigma() {
               onMouseEnter={handleIconAreaHover}
               onMouseLeave={handleIconAreaLeave}
             >
-              <div className="bg-white rounded-lg shadow-lg border p-2 flex flex-col gap-2">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-700 p-2 flex flex-col gap-2 transition-colors">
                 {actionIcons.map((action, index) => {
                   const Icon = action.icon;
                   const isBookmark = action.icon === Bookmark;
@@ -688,8 +688,8 @@ export default function EarningsDashboardFigma() {
                   return (
                     <button
                       key={index}
-                      className={`p-2 rounded-md transition-colors duration-200 ${action.color} hover:bg-gray-100 ${
-                        isBookmark && isInWatchlist ? 'bg-blue-50' : ''
+                                          className={`p-2 rounded-md transition-colors duration-200 ${action.color} hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                      isBookmark && isInWatchlist ? 'bg-blue-50 dark:bg-blue-900/20' : ''
                       }`}
                       title={isBookmark && hoveredRow ? (
                         isInWatchlist ? `Remove ${hoveredRow} from watchlist` : `Add ${hoveredRow} to watchlist`
@@ -706,7 +706,7 @@ export default function EarningsDashboardFigma() {
         )}
 
         {/* Additional Info */}
-        <div className="mt-8 text-center text-sm text-gray-500">
+        <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400 transition-colors">
           <p>Hover over any row to see available actions. The icons stay visible when you hover over them.</p>
         </div>
       </div>
